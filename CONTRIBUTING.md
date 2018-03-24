@@ -20,4 +20,4 @@
 
 For all Python code, the [PEP-8](https://www.python.org/dev/peps/pep-0008/) style guide should be followed. Use descriptive variable names. Travis CI will be linting for PEP-8.
 
-Include comments when your code is not self-explanatory. [Docstrings](https://www.python.org/dev/peps/pep-0257/) at the beginning of functions and classes are generally a goood idea.
+Include comments when your code is not self-explanatory. [Docstrings](https://www.python.org/dev/peps/pep-0257/) at the beginning of functions and classes are generally a good idea.
