@@ -24,7 +24,7 @@ Include comments when your code is not self-explanatory. [Docstrings](https://ww
 
 For docstrings, reST style formatiing should be used. Here is an example docstring in reST format:
 ```
-'''
+"""
 This function takes a banana and turns it into an apple.
  
 (Some relatively detailed explanation of the class or function)
@@ -32,6 +32,6 @@ This function takes a banana and turns it into an apple.
 :param banana: The banana to be converted.
 :returns: An apple, converted from a banana. 
 :raises TypeError: Raised when the object passed in is not a banana.
-'''
+"""
 ```
 The reST format is used because it is clean and easy to read, and PyCharm supports it natively when writing code. Sphinx will also automatically generate HTML documentation with this format.
