@@ -22,7 +22,7 @@ For all Python code, the [PEP-8](https://www.python.org/dev/peps/pep-0008/) styl
 
 Include comments when your code is not self-explanatory. [Docstrings](https://www.python.org/dev/peps/pep-0257/) at the beginning of functions and classes are generally a good idea.
 
-For docstrings, reST style formatiing should be used. Here is an example docstring in reST format:
+For docstrings, reST style formatting should be used. Here is an example docstring in reST format:
 ```
 """
 This function takes a banana and turns it into an apple.
