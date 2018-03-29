@@ -93,7 +93,10 @@ class ADXFile:
         current_record = _add_tag(self._records, "RECORD")
         for key in data:  # next line: TODO: Add support for user and app fields and metadata
             modified_key = key.upper().replace(" ", "_")
-            _add_tag(current_record, name=modified_key, data=data[key])
+            modified_data = data[key]
+            if type(modified_data) != str:
+                modified_data = str(modified_data)
+            _add_tag(current_record, name=modified_key, data=modified_data)
 
     def write_file(self):
         """Write the final tree to file."""
