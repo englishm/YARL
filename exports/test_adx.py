@@ -1,0 +1,1 @@
+"""Script to test the adx.py module."""
