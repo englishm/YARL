@@ -85,10 +85,10 @@ class ADXFile:
                  name="APP",
                  data=datetime.now().__str__(),
                  attributes={
-                        "PROGRAMID": _app_name,
-                        "FIELDNAME": "GEN_TIME",  # time file was written
-                        "TYPE": "S",  # S data type indicator for string
-                             }
+                    "PROGRAMID": _app_name,
+                    "FIELDNAME": "GEN_TIME",  # time file was written
+                    "TYPE": "S",  # S data type indicator for string
+                    }
                  )
         self._header_written = True
 
