@@ -71,7 +71,7 @@ class ADXFile:
         if self._in_records:
             raise ADIFExportError("Cannot add header while we're already writing records")
             # Technically, it is possible, but it is not defined in the ADIF documentation if it can be added to the end
-            # (which is where it would be added)
+            # (which is where it would be added (I think))
 
         header = _add_tag(self._root, "HEADER")
         _add_tag(header, "ADIF_VER", _adif_ver)
@@ -84,6 +84,7 @@ class ADXFile:
                     "FIELDNAME": "GEN_TIME",  # time this file was written
                     "TYPE": "S",  # S data type indicator for string
                     })
+        self._header_written = True
 
     def write_record(self, data: dict):
         """Add a new record to the file to be exported."""
@@ -101,6 +102,6 @@ class ADXFile:
     def write_file(self):
         """Write the final tree to file."""
         if os.path.exists(self.location):
-            raise FileExistsError(f"The location you'd like to export to already exists. (got: {file})")
+            raise FileExistsError(f"The location you'd like to export to already exists. (got: {self.location})")
         self._tree.write(self.location)
         return True
