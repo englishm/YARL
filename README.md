@@ -12,6 +12,7 @@ See [The TODO List](https://github.com/young-amateurs-rc/YARL/projects/1).
 ## Contributors
 
 - Galen Gold, KB6EE
+- ntoskrnl4
 
 ## License
 

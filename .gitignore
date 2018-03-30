@@ -1,3 +1,6 @@
+# Don't store .adx exports for now
+*.adx
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
