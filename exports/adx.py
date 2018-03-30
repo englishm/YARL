@@ -50,8 +50,8 @@ class ADXFile:
         if not os.path.exists(file):
             self.location = file
         else:
-            raise FileExistsError("The location you'd like to export to already"
-                                  f" exists. (got: {file})")
+            raise FileExistsError("The location you'd like to export to "
+                                  f"already exists. (got: {file})")
 
         self._tree = ElementTree(Element("ADX"))  # add the root element, <ADX>
         self._root = self._tree.getroot()  # use _add_tag() to add a subtag
@@ -85,16 +85,16 @@ class ADXFile:
                  name="APP",
                  data=datetime.now().__str__(),
                  attributes={
-                             "PROGRAMID": _app_name,
-                             "FIELDNAME": "GEN_TIME",  # time file was written
-                             "TYPE": "S",  # S data type indicator for string
+                            "PROGRAMID": _app_name,
+                            "FIELDNAME": "GEN_TIME",  # time file was written
+                            "TYPE": "S",  # S data type indicator for string
                             }
                  )
         self._header_written = True
 
     def write_record(self, data: dict):
         """Add a new record to the file to be exported."""
-        if not self._in_records and self._records is None: # 1st record to write
+        if not self._in_records and self._records is None:
             self._records = _add_tag(self._root, "RECORDS")
             self._in_records = True
         current_record = _add_tag(self._records, "RECORD")
@@ -108,7 +108,7 @@ class ADXFile:
     def write_file(self):
         """Write the final tree to file."""
         if os.path.exists(self.location):
-            raise FileExistsError("The location you'd like to export to already"
-                                  f" exists. (got: {self.location})")
+            raise FileExistsError("The location you'd like to export to "
+                                  f"already exists. (got: {self.location})")
         self._tree.write(self.location)
         return True
