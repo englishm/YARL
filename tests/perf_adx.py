@@ -10,7 +10,7 @@ exp_iters = 13  # number of entries will be 2**exp_iters
 test_path = "test_export.adx"
 
 # some bogus test data,  literally
-test_data = [{"bogus" + str(n): "123" for n in range(1,101) },]
+test_data = [{"bogus" + str(n): "123" for n in range(1, 101)}, ]
 
 # make the dataset exponentially larger
 for i in range(exp_iters):
