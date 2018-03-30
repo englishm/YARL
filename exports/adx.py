@@ -88,7 +88,7 @@ class ADXFile:
                      "PROGRAMID": _app_name,
                      "FIELDNAME": "GEN_TIME",  # time file was written
                      "TYPE": "S",  # S data type indicator for string
-                     }
+                            }
                  )
         self._header_written = True
 
