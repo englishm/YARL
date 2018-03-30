@@ -88,7 +88,7 @@ class ADXFile:
                      "PROGRAMID": _app_name,
                      "FIELDNAME": "GEN_TIME",
                      "TYPE": "S",
-                             }
+                            }
                  )
         self._header_written = True
 
