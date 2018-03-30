@@ -136,7 +136,7 @@ for x in test_data:
 file.write_file()
 
 end = time.perf_counter()
-exec_time = end-start
+exec_time = end - start
 
 print(f"Data export complete! Statistics:\n")
 print(f"Entries in list: {n_entries}")
