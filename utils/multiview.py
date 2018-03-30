@@ -55,6 +55,7 @@ class MultiView(QtWidgets.QMainWindow):
 
     def addView(self, v):
         self.MultiViewWidget.addWidget(v.getWidget())
+        return v
 
     def setCurrentView(self, v, updatemenu=True):
         self.currView = v
