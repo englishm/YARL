@@ -42,17 +42,11 @@ class ADXFile:
         """
         Create a new ADXFile that can be used to export QSOs into ADX files.
 
-        :param file: Location to create file at.
+        :param file: Location of file.
         :return: None
         """
-        # we're going to throw an error if the location to export to already
-        # exists. It shouldn't, if the GUI is done right, but that's ok.
-        if not os.path.exists(file):
-            self.location = file
-        else:
-            raise FileExistsError("The location you'd like to export to "
-                                  f"already exists. (got: {file})")
 
+        self.location = file
         self._tree = ElementTree(Element("ADX"))  # add the root element, <ADX>
         self._root = self._tree.getroot()  # use _add_tag() to add a subtag
         self._in_records = False  # are we currently writing records?
@@ -110,5 +104,5 @@ class ADXFile:
         if os.path.exists(self.location):
             raise FileExistsError("The location you'd like to export to "
                                   f"already exists. (got: {self.location})")
-        self._tree.write(self.location)
+        self._tree.write(self.location, xml_declaration=True)
         return True
