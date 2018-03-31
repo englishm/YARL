@@ -1,10 +1,12 @@
+# Main script for YARL
+# Yet Another Radio Logger
+
 import sys, os
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtWidgets import *
 
 from utils.multiview import MultiView
 from views.log import LogView
-from views.sampleview import view1
 
 
 class Yarl(MultiView):
@@ -33,7 +35,6 @@ class Yarl(MultiView):
     def setViews(self):
         # initialize views
         self.logview = self.addView(LogView(self))
-        self.tmp = self.addView(view1(self))
 
         # set first view
         # for now, the logview is the first
