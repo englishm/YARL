@@ -10,15 +10,33 @@ import xml.etree.ElementTree as ET
 from simplecrypt import encrypt, decrypt
 
 
+# return class
+class LookupResult:
+    def __init__(self):
+        self.callsign = ''
+        self.name = ''
+        self.country = ''
+        self.qth = ''
+        self.itu = ''
+        self.cq = ''
+        self.grid = ''
+        self.street1 = ''
+        self.street2 = ''
+        self.city = ''
+        self.state = ''
+        self.zip = ''
+
+        self.raw = {}
+
 class OnlineLookup:
     def __init__(self):
         self.active = False
         self.prefix = "{https://www.hamqth.com}"
 
-    # init with a key
+    # init with existing credentials
     # TODO: implement a way to save passwords safely
     # TODO: also, pretty much this whole function
-    def initWithKey(self, username, fn, passcode):
+    def initWithCreds(self, username, fn, passcode):
         f = open(fn)
         pw = 'stopped here'
 
@@ -69,10 +87,11 @@ class OnlineLookup:
             return None
 
     # looks up callsigns on hamqth
-    # IF PASS: returns a dictionary of data keyed on type (e.g. callsign)
+    # IF PASS: returns a filled CallsignResult class
     # IF FAIL: returns None
     def lookup(self, call):
         # setup
+        lr = LookupResult()
         retdict = {}
         req = "https://www.hamqth.com/xml.php?id=" + self.key + "&callsign=" + call + "&prg=YARL"
 
@@ -95,11 +114,28 @@ class OnlineLookup:
                 key = t.tag[len(self.prefix):]
                 value = t.text
 
+                # info filling
+                if key == 'callsign': lr.callsign = value.upper()
+                elif key == 'adr_name': lr.name = value
+                elif key == 'adr_street1': lr.street1 = value
+                elif key == 'adr_street2': lr.street2 = value
+                elif key == 'adr_city': lr.city = value
+                elif key == 'us_state': lr.state = value
+                elif key == 'adr_zip': lr.zip = value
+                elif key == 'country': lr.country = value
+                elif key == 'qth': lr.qth = value
+                elif key == 'itu': lr.itu = value
+                elif key == 'cq': lr.cq = value
+                elif key == 'grid': lr.grid = value
+
+                # set raw data for extra whatever
                 if key != None and value != None:
                     retdict[key] = value
                     print(key + ': ' + value)
-            return retdict
 
+            # set raw data and return
+            lr.raw = retdict
+            return lr
 
 # USED FOR TESTING
 if __name__ == "__main__":
@@ -121,4 +157,7 @@ if __name__ == "__main__":
         call = input('Lookup? (type q to exit): ')
 
         if call == 'q': break
-        else: ol.lookup(call)
+        else:
+            result = ol.lookup(call)
+            print('')
+            print('random results testing: ' + result.callsign + " " + result.qth + " " + result.grid)
