@@ -40,8 +40,7 @@ class ADXFile:
 
     The class is first created with a filename to use, and a mode is given upon
     instantiation that defines the intended operation, whether it is to
-    import or export data. Note that using export operations when the mode is
-    set to import (and vice versa) yields undefined behavour, so don't try :)
+    import or export data.
     """
 
     def __init__(self, file, mode="export"):
