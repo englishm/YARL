@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
 from utils.multiview import View
+from utils.onlinelookup import *
 
 
 class SettingsView(View):
@@ -16,11 +17,13 @@ class SettingsView(View):
         self.setupWidgets()
         self.setupLayouts()
         self.buildView()
+        self.startLookup()
 
     def setupWidgets(self):
         self.widgets = {}
 
         self.widgets['lookup-area'] = QGroupBox('HamQTH')
+        self.widgets['lookup-status'] = QLabel('Status: Not activated')
         self.widgets['lookup-user'] = QLineEdit()
         self.widgets['lookup-pass'] = QLineEdit()
         self.widgets['lookup-set'] = QPushButton('Set')
@@ -51,9 +54,7 @@ class SettingsView(View):
         self.lookuplayout.addWidget(QLabel('Password'), 1,0)
         self.lookuplayout.addWidget(self.widgets['lookup-pass'], 1,1)
         self.lookuplayout.addWidget(self.widgets['lookup-set'], 2,0, 1,2)
-        self.lookuplayout.addWidget(QLabel('Key'), 3,0)
-        self.lookuplayout.addWidget(self.widgets['lookup-key'], 3,1)
-        self.lookuplayout.addWidget(self.widgets['lookup-key-button'], 4,0, 1,2)
+        self.lookuplayout.addWidget(self.widgets['lookup-status'], 3,0, 1,2)
 
         # main layout
         self.layout.addWidget(self.widgets['lookup-area'], 0,0)
@@ -62,13 +63,25 @@ class SettingsView(View):
         self.layout.setColumnStretch(1,2)
         self.layout.setRowStretch(1,2)
 
+    def startLookup(self):
+        try:
+            self.ol.connect()
+            self.widgets['lookup-status'].setText('Status: Connected')
+        except NoLoginError as e:
+            self.widgets['lookup-status'].setText('Status: No login found')
+        except BadLoginError as e:
+            self.widgets['lookup-status'].setText('Status: Bad login info')
+        except BadFormatError as e:
+            self.widgets['lookup-status'].setText('Status: Something happened.')
+
     ### signals ###
 
     def olconnectsig(self):
         username = self.widgets['lookup-user'].text()
         password = self.widgets['lookup-pass'].text()
 
-        self.ol.init(username, password)
+        self.ol.createLogin(username, password)
+        self.startLookup()
 
     def olkeysig(self):
         self.ol.initkey(self.widgets['lookup-key'].text())

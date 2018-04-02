@@ -23,6 +23,7 @@ class Yarl(MultiView):
         self.width = 800
         self.height = 400
 
+        # shared online lookup objectd
         self.ol = OnlineLookup()
 
         # setup
