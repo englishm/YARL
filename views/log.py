@@ -43,14 +43,14 @@ class LogView(View):
 
     def buildView(self):
         # info
-        self.infolay.addWidget(QLabel('Callsign'), 0,0)
-        self.infolay.addWidget(self.widgets['info-call'], 0,1)
-        self.infolay.addWidget(QLabel('Name'), 1,0)
-        self.infolay.addWidget(self.widgets['info-name'], 1,1)
-        self.infolay.addWidget(QLabel('Country'), 2,0)
-        self.infolay.addWidget(self.widgets['info-country'], 2,1)
+        #self.infolay.addWidget(QLabel('Callsign'), 0,0)
+        #self.infolay.addWidget(self.widgets['info-call'], 0,1)
+        self.infolay.addWidget(QLabel('Name'), 0,0)
+        self.infolay.addWidget(self.widgets['info-name'], 0,1)
+        self.infolay.addWidget(QLabel('Country'), 1,0)
+        self.infolay.addWidget(self.widgets['info-country'], 1,1)
 
-        self.infolay.setRowStretch(3,4)
+        self.infolay.setRowStretch(2,4)
 
         # main layout
         self.layout.addWidget(QLabel('Start with the callsign'), 0,0)
@@ -73,6 +73,7 @@ class LogView(View):
             self.setStatus('no call sign found')
             return
 
+        self.setStatus('Callsign found')
         self.widgets['info'].setTitle('Info: ' + result.callsign)
         self.widgets['info-call'].setText(result.callsign)
         self.widgets['info-name'].setText(result.name)
