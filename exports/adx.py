@@ -28,6 +28,12 @@ class ADIFExportError(Exception):
     """Raised when there is an error exporting to an .adx file."""
 
 
+class ModeMismatchException(ADIFExportError):
+    """Raised when an import class method is called in export mode, and vice
+    versa.
+    """
+
+
 class ADXFile:
     """
     This class provides functions to read/write QSO info to/from .adx files.
@@ -67,6 +73,10 @@ class ADXFile:
 
         :returns: List of dicts of tags in the header.
         """
+        if self.mode is not "import":
+            raise ModeMismatchException(
+                "Trying to use an import method in export mode.")
+
         header = self._root.find("HEADER")
         data = []
         for tag in header:
@@ -83,6 +93,10 @@ class ADXFile:
 
         :returns: List of dicts of records.
         """
+        if self.mode is not "import":
+            raise ModeMismatchException(
+                "Trying to use an import method in export mode.")
+
         records = []
         records_root = self._root.find("RECORDS")
         for record in records_root:
@@ -101,6 +115,10 @@ class ADXFile:
         :return: None
         :raise: ADIFExportError if called twice.
         """
+        if self.mode is not "export":
+            raise ModeMismatchException(
+                "Trying to use an export method in import mode.")
+
         if self._header_written:
             raise ADIFExportError(
                 "Attempted adding header to file which already had a header")
@@ -113,19 +131,23 @@ class ADXFile:
         header = _add_tag(self._root, "HEADER")
         _add_tag(header, "ADIF_VER", _adif_ver)
         _add_tag(header, "PROGRAMID", _app_name)
-        _add_tag(parent=header,
-                 name="APP",
-                 data=datetime.now().__str__(),
-                 attributes={
-                     "PROGRAMID": _app_name,
-                     "FIELDNAME": "GEN_TIME",
-                     "TYPE": "S",
-                            }
-                 )
+        _add_tag(
+            parent=header,
+            name="APP",
+            data=datetime.now().__str__(),
+            attributes={
+                "PROGRAMID": _app_name,
+                "FIELDNAME": "GEN_TIME",
+                "TYPE": "S",
+            })
         self._header_written = True
 
     def write_record(self, data: dict):
         """Add a new record to the file to be exported."""
+        if self.mode is not "export":
+            raise ModeMismatchException(
+                "Trying to use an export method in import mode.")
+
         if not self._in_records and self._records is None:
             self._records = _add_tag(self._root, "RECORDS")
             self._in_records = True
@@ -139,6 +161,10 @@ class ADXFile:
 
     def write_file(self):
         """Write the final tree to file."""
+        if self.mode is not "export":
+            raise ModeMismatchException(
+                "Trying to use an export method in import mode.")
+
         if os.path.exists(self.file):
             raise FileExistsError("The location you'd like to export to "
                                   f"already exists. (got: {self.file})")
