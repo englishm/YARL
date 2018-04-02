@@ -5,12 +5,25 @@
 #          It is not intended to be standalone, but as an interface to hamqth.
 
 
-import json, urllib, urllib.request
+import os.path, urllib, urllib.request
 import xml.etree.ElementTree as ET
-from simplecrypt import encrypt, decrypt
 
 
-# return class
+### exeptions ###
+
+class NoLoginError(IOError):
+    def __init__(self, arg): self.args = arg
+class BadFormatError(IOError):
+    def __init__(self, arg): self.args = arg
+class BadLoginError(IOError):
+    def __init__(self, arg): self.args = arg
+class NoResultError(ValueError):
+    def __init__(self, arg): self.args = arg
+class NotActiveError(ValueError):
+    def __init__(self, arg): self.args = arg
+
+### return class ###
+
 class LookupResult:
     def __init__(self):
         self.callsign = ''
@@ -28,45 +41,49 @@ class LookupResult:
 
         self.raw = {}
 
+### lookup class ###
+
 class OnlineLookup:
     def __init__(self):
         self.active = False
         self.prefix = "{https://www.hamqth.com}"
 
-    # init with existing credentials
-    # TODO: implement a way to save passwords safely
-    # TODO: also, pretty much this whole function
-    def initWithCreds(self, username, fn, passcode):
-        f = open(fn)
-        pw = 'stopped here'
+    # connect
+    # tries to connect automatically
+    # raises exceptions upon fail
+    def connect(self):
+        # look for appropriate files
+        if not os.path.exists('.onlinelookup-login.txt'):
+            raise NoLoginError('connect')
+        with open('.onlinelookup-login.txt', 'r') as f:
+            lines = f.readlines()
+            if len(lines) != 2:
+                raise BadFormatError('connect')
+            else:
+                self.username = lines[0].strip()
+                self.password = lines[1].strip()
+        if os.path.exists('.onlinelookup-key.txt'):
+            with open('.onlinelookup-key.txt', 'r') as f:
+                lines = f.readlines()
+                f.close()
+                if len(lines) != 1:
+                    self.getKey()
 
-    # init just a key
-    # purpose is mostly for testing
-    def initkey(self, key):
-        self.active = True
-        self.key = key
-
-    # initializes a session with hamqth
-    # gets an api key for an hour
-    def init(self, username, password):
-        self.username = username
-        self.password = password
-        self.active = True
-        self.key = self.getKey()
-
-        # check and return
-        if self.key == None: return False
+                else:
+                    self.key = lines[0].strip()
+                    self.active = True
         else:
-            print("Copy this key. It will work for an hour: " + self.key)
-            return True
+            self.getKey()
+
+    def createLogin(self, username, password):
+        with open('.onlinelookup-login.txt', 'w') as f:
+            f.write(username + '\n' + password)
+            f.close()
 
     # gets a key using username and password
     # called when starting and when key expires
-    # IF PASS: returns api key
-    # IF FAIL: returns None
+    # raises exceptions on failure
     def getKey(self):
-        if not self.active: return None
-
         # grab xml data
         req = "https://www.hamqth.com/xml.php?u=" + self.username + "&p=" + self.password
         data = ET.parse(urllib.request.urlopen(req))
@@ -74,25 +91,28 @@ class OnlineLookup:
 
         # pass
         if root[0][0].tag == self.prefix + "session_id":
-            print("passed")
-            return root[0][0].text
+            self.active = True
+            self.key = root[0][0].text
+
+            # write to a file
+            with open('.onlinelookup-key.txt', 'w') as f:
+                f.write(self.key)
+                f.close()
 
         # fail
         elif root[0][0].tag == self.prefix + "error":
-            print('failed')
-            return None
+            raise BadLoginError('getKey')
 
         # catastrophic failure
         else:
-            print("Something happened.")
-            return None
+            raise BadLoginError('getKey: catastrophic')
 
     # looks up callsigns on hamqth
     # IF PASS: returns a filled CallsignResult class
-    # IF FAIL: returns None
+    # IF FAIL: raises NoResultError
     def lookup(self, call):
         # error check
-        if not self.active: return None
+        if not self.active: raise NotActiveError('lookup')
         # setup
         lr = LookupResult()
         retdict = {}
@@ -103,16 +123,15 @@ class OnlineLookup:
         root = data.getroot()
 
         # error check
-        # TODO: deal with failure, also in real life :(
         if root[0].tag == self.prefix + "session":
             errmess = root[0][0].text
             if errmess == 'Session does not exist or expired':
-                print('Key is bad or out of date')
+                self.getKey()
             elif errmess == 'Callsign not found':
-                print('Bad call sign')
-            return None
+                raise NoResultError('lookup')
+
+        # callsign found
         elif root[0].tag == self.prefix + "search":
-            print("GOOD")
             for t in root[0]:
                 key = t.tag[len(self.prefix):]
                 value = t.text
@@ -134,33 +153,51 @@ class OnlineLookup:
                 # set raw data for extra whatever
                 if key != None and value != None:
                     retdict[key] = value
-                    #print(key + ': ' + value)
 
             # set raw data and return
             lr.raw = retdict
             return lr
 
 # USED FOR TESTING
+def newlogin():
+    un = input('username: ')
+    pw = input('password: ')
+    ol.createLogin(un, pw)
+
 if __name__ == "__main__":
     ol = OnlineLookup()
-
-    ch = input('Do you have a key? (leave blank if not): ')
-
-    if ch != '':
-        ol.initkey(ch)
-
-    else:
-        un = input('username: ')
-        ps = input('password: ')
-        ol.init(un, ps)
-
-    # test run
+    cont = True
     while True:
-        print('') # new line for readability
-        call = input('Lookup? (type q to exit): ')
+        try:
+            ol.connect()
+            break
+        except NoLoginError as e:
+            newlogin()
+        except BadLoginError as e:
+            print('Bad login')
+            newlogin()
+        except BadFormatError as e:
+            print('Bad formatting')
+            cont = False
+            break
 
-        if call == 'q': break
-        else:
-            result = ol.lookup(call)
-            print('')
-            print('random results testing: ' + result.callsign + " " + result.qth + " " + result.grid)
+    if cont:
+        # test run
+        while True:
+            print('') # new line for readability
+            call = input('Lookup? (type q to exit): ')
+
+            if call == 'q': break
+            else:
+                try:
+                    result = ol.lookup(call)
+                    print('')
+                    print('random results testing: ' + result.callsign + " " + result.qth + " " + result.grid)
+                except NotActiveError:
+                    print('not active, exiting')
+                    break
+                except BadLoginError:
+                    print('login bad, exiting')
+                    break
+                except NoResultError:
+                    print('No result')
