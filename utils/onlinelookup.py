@@ -126,7 +126,10 @@ class OnlineLookup:
         if root[0].tag == self.prefix + "session":
             errmess = root[0][0].text
             if errmess == 'Session does not exist or expired':
+                # try again
+                # NOTE: this may infinite loop on a bad day maybe
                 self.getKey()
+                return self.lookup(call)
             elif errmess == 'Callsign not found':
                 raise NoResultError('lookup')
 
