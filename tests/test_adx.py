@@ -36,7 +36,7 @@ class TestADXExport(unittest.TestCase):
         finally:
             self.assertIsInstance(e, ADIFExportError)
 
-    def test_import_method_exceptions(self):
+    def test_mode_mismatch_exceptions(self):
         file = ADXFile(self.test_path)
         self.assertRaises(ModeMismatchException, file.get_header)
         self.assertRaises(ModeMismatchException, file.return_all_records)
@@ -80,7 +80,7 @@ class TestADXImport(unittest.TestCase):
         records = file.return_all_records()
         self.assertCountEqual(records, self.correct_records)
 
-    def test_import_method_exceptions(self):
+    def test_mode_mismatch_exceptions(self):
         file = ADXFile("test_import.adx", mode="import")
         self.assertRaises(ModeMismatchException, file.write_header)
         self.assertRaises(ModeMismatchException, file.write_record, dict())
