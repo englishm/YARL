@@ -4,7 +4,8 @@ import os
 import sys
 import unittest
 sys.path.append("..")
-from exports.adx import ADXFile, ADIFExportError
+from exports.adx import ADXFile, ADIFExportError, \
+    ModeMismatchException
 
 
 class TestADXExport(unittest.TestCase):
@@ -35,41 +36,39 @@ class TestADXExport(unittest.TestCase):
         finally:
             self.assertIsInstance(e, ADIFExportError)
 
+    def test_import_method_exceptions(self):
+        file = ADXFile(self.test_path)
+        self.assertRaises(ModeMismatchException, file.get_header)
+        self.assertRaises(ModeMismatchException, file.return_all_records)
+
 
 class TestADXImport(unittest.TestCase):
     test_path = "test_import.adx"
 
-    correct_header = [
-        {
-            "tag": "ADIF_VER",
-            "attrib": {},
-            "data": "3.0.8",
+    correct_header = [{
+        "tag": "ADIF_VER",
+        "attrib": {},
+        "data": "3.0.8",
+    }, {
+        "tag": "PROGRAMID",
+        "attrib": {},
+        "data": "YARL",
+    }, {
+        "tag": "APP",
+        "attrib": {
+            "FIELDNAME": "GEN_TIME",
+            "PROGRAMID": "YARL",
+            "TYPE": "S",
         },
-        {
-            "tag": "PROGRAMID",
-            "attrib": {},
-            "data": "YARL",
-        },
-        {
-            "tag": "APP",
-            "attrib": {
-                "FIELDNAME": "GEN_TIME",
-                "PROGRAMID": "YARL",
-                "TYPE": "S",
-            },
-            "data": "2018-03-31 18:26:32.373506",
-        }
-    ]
-    correct_records = [
-        {
-            'TIME': '2018-03-31 12:22:15.552211',
-            'CALL': 'KB6EE'
-        },
-        {
-            'TIME': '2011-11-11 14:41:56.921583',
-            'CALL': 'D0VKN'
-        }
-    ]
+        "data": "2018-03-31 18:26:32.373506",
+    }]
+    correct_records = [{
+        'TIME': '2018-03-31 12:22:15.552211',
+        'CALL': 'KB6EE'
+    }, {
+        'TIME': '2011-11-11 14:41:56.921583',
+        'CALL': 'D0VKN'
+    }]
 
     def test_header_read(self):
         file = ADXFile("test_import.adx", mode="import")
@@ -80,6 +79,13 @@ class TestADXImport(unittest.TestCase):
         file = ADXFile("test_import.adx", mode="import")
         records = file.return_all_records()
         self.assertCountEqual(records, self.correct_records)
+
+    def test_import_method_exceptions(self):
+        file = ADXFile("test_import.adx", mode="import")
+        self.assertRaises(ModeMismatchException, file.write_header)
+        self.assertRaises(ModeMismatchException, file.write_record, dict())
+        self.assertRaises(ModeMismatchException, file.write_file)
+
 
 if __name__ == "__main__":
     unittest.main()
