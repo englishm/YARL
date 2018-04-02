@@ -43,6 +43,7 @@ class OnlineLookup:
     # init just a key
     # purpose is mostly for testing
     def initkey(self, key):
+        self.active = True
         self.key = key
 
     # initializes a session with hamqth
@@ -90,6 +91,8 @@ class OnlineLookup:
     # IF PASS: returns a filled CallsignResult class
     # IF FAIL: returns None
     def lookup(self, call):
+        # error check
+        if not self.active: return None
         # setup
         lr = LookupResult()
         retdict = {}
@@ -131,7 +134,7 @@ class OnlineLookup:
                 # set raw data for extra whatever
                 if key != None and value != None:
                     retdict[key] = value
-                    print(key + ': ' + value)
+                    #print(key + ': ' + value)
 
             # set raw data and return
             lr.raw = retdict
