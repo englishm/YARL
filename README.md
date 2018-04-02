@@ -1,6 +1,6 @@
 # YARL
 
-Yet Another Radio Logger. Written in Python 3.
+Yet Another Radio Logger. Written in Python 3.6.
 
 Designed to be the ham radio logging program that covers the gaps between the
 best contest loggers the best general purpose loggers.
@@ -12,6 +12,7 @@ See [The TODO List](https://github.com/young-amateurs-rc/YARL/projects/1).
 ## Contributors
 
 - Galen Gold, KB6EE
+- ntoskrnl4
 
 ## License
 
