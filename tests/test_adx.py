@@ -6,49 +6,25 @@ import unittest
 sys.path.append("..")
 from exports.adx import ADXFile, ADIFExportError
 
-test_path = "test_export.adx"
 
+class TestADXExport(unittest.TestCase):
+    test_path = "test_export.adx"
 
-class TestADXFile(unittest.TestCase):
-    def test_creation(self):
-        if os.path.exists(test_path):
+    def setUp(self):
+        if os.path.exists(self.test_path):
             # rip that file
-            os.remove(test_path)
+            os.remove(self.test_path)
 
-        test_file = ADXFile(test_path)
+    def tearDown(self):
+        if os.path.exists(self.test_path):
+            os.remove(self.test_path)
+
+    def test_creation(self):
+        test_file = ADXFile(self.test_path)
         self.assertIsInstance(test_file, ADXFile)
 
-    def test_creation_fail(self):
-        if not os.path.exists(test_path):
-            open(test_path, "w+").close()
-        try:
-            e = ADXFile(test_path)
-        except Exception as f:
-            e = f
-        else:
-            e = None
-        finally:
-            self.assertIsInstance(e, FileExistsError)
-
-    def test_write_fail(self):
-        if os.path.exists(test_path):
-            os.remove(test_path)
-        file = ADXFile(test_path)
-        file.write_header()
-        open(test_path, "w+").close()
-        try:
-            e = file.write_file()
-        except Exception as f:
-            e = f
-        else:
-            e = None
-        finally:
-            self.assertIsInstance(e, FileExistsError)
-
     def test_double_header_fail(self):
-        if os.path.exists(test_path):
-            os.remove(test_path)
-        file = ADXFile(test_path)
+        file = ADXFile(self.test_path)
         file.write_header()
         try:
             e = file.write_header()
@@ -58,6 +34,52 @@ class TestADXFile(unittest.TestCase):
             e = None
         finally:
             self.assertIsInstance(e, ADIFExportError)
+
+
+class TestADXImport(unittest.TestCase):
+    test_path = "test_import.adx"
+
+    correct_header = [
+        {
+            "tag": "ADIF_VER",
+            "attrib": {},
+            "data": "3.0.8",
+        },
+        {
+            "tag": "PROGRAMID",
+            "attrib": {},
+            "data": "YARL",
+        },
+        {
+            "tag": "APP",
+            "attrib": {
+                "FIELDNAME": "GEN_TIME",
+                "PROGRAMID": "YARL",
+                "TYPE": "S",
+            },
+            "data": "2018-03-31 18:26:32.373506",
+        }
+    ]
+    correct_records = [
+        {
+            'TIME': '2018-03-31 12:22:15.552211',
+            'CALL': 'KB6EE'
+        },
+        {
+            'TIME': '2011-11-11 14:41:56.921583',
+            'CALL': 'D0VKN'
+        }
+    ]
+
+    def test_header_read(self):
+        file = ADXFile("test_import.adx", mode="import")
+        header = file.get_header()
+        self.assertCountEqual(header, self.correct_header)
+
+    def test_record_read(self):
+        file = ADXFile("test_import.adx", mode="import")
+        records = file.return_all_records()
+        self.assertCountEqual(records, self.correct_records)
 
 if __name__ == "__main__":
     unittest.main()

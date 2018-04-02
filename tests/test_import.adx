@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='us-ascii'?>
+<!-- DO NOT MODIFY THIS FILE FOR ANY REASON, YOU WILL BREAK THE UNIT TESTS -->
+<ADX>
+    <HEADER>
+        <ADIF_VER>3.0.8</ADIF_VER>
+        <PROGRAMID>YARL</PROGRAMID>
+        <APP FIELDNAME="GEN_TIME" PROGRAMID="YARL" TYPE="S">2018-03-31 18:26:32.373506</APP>
+    </HEADER>
+    <RECORDS>
+        <RECORD>
+            <TIME>2018-03-31 12:22:15.552211</TIME>
+            <CALL>KB6EE</CALL>
+        </RECORD>
+        <RECORD>
+            <TIME>2011-11-11 14:41:56.921583</TIME>
+            <CALL>D0VKN</CALL>
+        </RECORD>
+    </RECORDS>
+</ADX>

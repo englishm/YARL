@@ -1,5 +1,5 @@
-# Don't store .adx exports for now
-*.adx
+# Don't store test exports
+test_export.adx
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
