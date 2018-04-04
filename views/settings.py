@@ -74,9 +74,9 @@ class SettingsView(View):
         except olerror.BadLoginError as e:
             self.widgets['lookup-status'].setText('Status: Bad login info')
         except olerror.BadFormatError as e:
-            self.widgets['lookup-status'].setText('Status: Something happened.')
+            self.widgets['lookup-status'].setText('Status: Something happened')
 
-    ### signals ###
+    # ## signals ## #
 
     def olconnectsig(self):
         username = self.widgets['lookup-user'].text()
