@@ -6,7 +6,7 @@ from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtWidgets import *
 
 from utils.multiview import MultiView
-from utils.onlinelookup import OnlineLookup
+from utils.onlinelookup import hamqth, olerror
 from views.log import LogView
 from views.settings import SettingsView
 
@@ -24,7 +24,7 @@ class Yarl(MultiView):
         self.height = 400
 
         # shared online lookup objectd
-        self.ol = OnlineLookup()
+        self.ol = hamqth.HamQTHLookup()
 
         # setup
         self.setupWindow()
@@ -69,23 +69,24 @@ class Yarl(MultiView):
         self.widgets['main'].setLayout(self.layout)
 
     def build(self):
-        self.layout.addWidget(self.widgets['log'], 0,0)
-        self.layout.addWidget(self.widgets['settings'], 0,1)
-        self.layout.addWidget(self.getViewer(), 1,0, 1,3)
+        self.layout.addWidget(self.widgets['log'], 0, 0)
+        self.layout.addWidget(self.widgets['settings'], 0, 1)
+        self.layout.addWidget(self.getViewer(), 1, 0, 1, 3)
 
         # options
-        self.layout.setColumnStretch(2,4)
+        self.layout.setColumnStretch(2, 4)
 
         # final thing
         self.setCentralWidget(self.widgets['main'])
 
-    ### signals ###
+    # ## signals ## #
 
     def settingssig(self):
         self.setCurrentView(self.settingsview)
 
     def logsig(self):
         self.setCurrentView(self.logview)
+
 
 if __name__ == '__main__':
     # QT IT UP

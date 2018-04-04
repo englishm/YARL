@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
 from utils.multiview import View
-from utils.onlinelookup import *
+from utils.onlinelookup import hamqth, olerror
 
 
 class SettingsView(View):
@@ -67,11 +67,13 @@ class SettingsView(View):
         try:
             self.ol.connect()
             self.widgets['lookup-status'].setText('Status: Connected')
-        except NoLoginError as e:
+        except olerror.LookupVerificationError as e:
+            self.widgets['lookup-status'].setText('Status: bad login')
+        except olerror.NoLoginError as e:
             self.widgets['lookup-status'].setText('Status: No login found')
-        except BadLoginError as e:
+        except olerror.BadLoginError as e:
             self.widgets['lookup-status'].setText('Status: Bad login info')
-        except BadFormatError as e:
+        except olerror.BadFormatError as e:
             self.widgets['lookup-status'].setText('Status: Something happened.')
 
     ### signals ###
