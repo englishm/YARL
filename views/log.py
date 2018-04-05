@@ -137,7 +137,7 @@ class LogView(View):
         self.layout.addWidget(self.widgets['call-box'], 0, 0)
         self.layout.addWidget(self.widgets['date-box'], 0, 1)
         self.layout.addWidget(self.widgets['rep-box'], 0, 2)
-        self.layout.addWidget(self.widgets['logbook'], 2, 0, 1, 4)
+        self.layout.addWidget(self.widgets['logbook'], 1, 0, 1, 4)
 
         # options
         self.layout.setRowStretch(1, 4)
