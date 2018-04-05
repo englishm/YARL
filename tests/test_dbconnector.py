@@ -2,7 +2,7 @@ import os
 import sys
 import unittest
 sys.path.append('..')
-from dbconnector import DbConnector
+from utils.dbconnector.dbconnector import DbConnector
 from sqlalchemy import *
 
 
