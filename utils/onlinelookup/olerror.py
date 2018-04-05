@@ -36,28 +36,3 @@ class LookupResultError(OnlineLookupError):
 class LookupActiveError(OnlineLookupError):
     def __init__(self, api):
         super().__init__(api)
-
-
-class NoLoginError(OnlineLookupError):
-    def __init__(self, api):
-        super().__init__(api)
-
-
-class BadLoginError(OnlineLookupError):
-    def __init__(self, api):
-        super().__init__(api)
-
-
-class BadFormatError(OnlineLookupError):
-    def __init__(self, api):
-        super().__init__(api)
-
-
-class NotActiveError(OnlineLookupError):
-    def __init__(self, api):
-        super().__init__(api)
-
-
-class NoResultError(OnlineLookupError):
-    def __init__(self, api):
-        super().__init__(api)

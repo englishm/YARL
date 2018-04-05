@@ -20,7 +20,7 @@ class Yarl(MultiView):
         self.title = 'Yet Another Radio Logger'
         self.left = 10
         self.top = 10
-        self.width = 800
+        self.width = 600
         self.height = 400
 
         # shared online lookup objectd

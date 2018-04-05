@@ -115,7 +115,7 @@ class LogView(View):
             'name': 'test name',
             'qth': 'atlantis',
             'dxcc': str(13 + i),
-            'freq':str(round(7.202 + i, 6))
+            'freq': str(round(7.202 + i, 6))
         } for i in range(0, 50)]
 
         print(data)
