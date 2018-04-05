@@ -23,10 +23,10 @@ class LogView(View):
 
         # initialize layouts
         self.layout = QGridLayout()
-        self.infolay = QGridLayout()
         self.logbooklay = QGridLayout()
         self.timelay = QGridLayout()
         self.calllay = QGridLayout()
+        self.replay = QGridLayout()
 
         # initalizerators
         self.setup_widgets()
@@ -34,13 +34,6 @@ class LogView(View):
         self.build_view()
 
     def setup_widgets(self):
-        self.widgets['info'] = QGroupBox('Info')
-
-        # info things
-        self.widgets['info-call'] = QLineEdit()
-        self.widgets['info-name'] = QLineEdit()
-        self.widgets['info-country'] = QLineEdit()
-
         # Logbook
         self.widgets['logbook'] = QGroupBox('Logbook')
         self.widgets['logbook-table'] = QTableWidget()
@@ -49,10 +42,13 @@ class LogView(View):
         # log info
         self.widgets['call-box'] = QGroupBox('Callsign')
         self.widgets['date-box'] = QGroupBox('Date/Time')
+        self.widgets['rep-box'] = QGroupBox('Report')
 
         self.widgets['call'] = QLineEdit()
-        self.widgets['call-info'] = QPushButton('Info')
+        self.widgets['call-more'] = QPushButton('More')
         self.widgets['call-qrz'] = QPushButton('QRZ')
+        self.widgets['call-name'] = QLineEdit()
+        self.widgets['call-loc'] = QLineEdit()
 
         self.widgets['date-time'] = QLineEdit()
         self.widgets['date-month'] = QLineEdit()
@@ -60,6 +56,9 @@ class LogView(View):
         self.widgets['date-year'] = QLineEdit()
         self.widgets['date-get'] = QPushButton('Get time')
         self.widgets['date-reset'] = QPushButton('Reset time')
+
+        self.widgets['rep-sent'] = QLineEdit()
+        self.widgets['rep-recv'] = QLineEdit()
 
         # set signals
         self.widgets['call'].returnPressed.connect(self.lookupsig)
@@ -69,46 +68,47 @@ class LogView(View):
         self.widgets['call-qrz'].clicked.connect(self.qrzsig)
 
         # options
-        self.widgets['call-info'].setDisabled(True)
+        self.widgets['call-more'].setDisabled(True)
         self.widgets['call-qrz'].setDisabled(True)
+        self.widgets['call'].setPlaceholderText('Call')
+        self.widgets['call-loc'].setPlaceholderText('Location')
+        self.widgets['call-name'].setPlaceholderText('Name')
 
         self.widgets['date-time'].setPlaceholderText('Time')
         self.widgets['date-day'].setPlaceholderText('Day')
         self.widgets['date-month'].setPlaceholderText('Month')
         self.widgets['date-year'].setPlaceholderText('Year')
 
+        self.widgets['call-more'].setFixedWidth(50)
+        self.widgets['call-qrz'].setFixedWidth(50)
         self.widgets['date-day'].setFixedWidth(50)
         self.widgets['date-time'].setFixedWidth(50)
         self.widgets['date-month'].setFixedWidth(50)
         self.widgets['date-year'].setFixedWidth(50)
+        self.widgets['rep-sent'].setFixedWidth(30)
+        self.widgets['rep-recv'].setFixedWidth(30)
 
         self.widgets['date-time'].setValidator(QIntValidator())
         self.widgets['date-day'].setValidator(QIntValidator())
         self.widgets['date-month'].setValidator(QIntValidator())
         self.widgets['date-year'].setValidator(QIntValidator())
+        self.widgets['rep-sent'].setValidator(QIntValidator())
+        self.widgets['rep-recv'].setValidator(QIntValidator())
+
+        self.widgets['rep-sent'].setText('59')
+        self.widgets['rep-recv'].setText('59')
 
     def setup_layouts(self):
 
         # set layouts to widgets
-        self.widgets['info'].setLayout(self.infolay)
         self.widgets['logbook'].setLayout(self.logbooklay)
         self.widgets['date-box'].setLayout(self.timelay)
         self.widgets['call-box'].setLayout(self.calllay)
+        self.widgets['rep-box'].setLayout(self.replay)
 
         self.setViewLayout(self.layout)
 
     def build_view(self):
-        '''
-        # info
-        self.infolay.addWidget(QLabel('Name'), 0, 0)
-        self.infolay.addWidget(self.widgets['info-name'], 0, 1)
-        self.infolay.addWidget(QLabel('Country'), 1, 0)
-        self.infolay.addWidget(self.widgets['info-country'], 1, 1)
-        self.infolay.addWidget(self.widgets['date-time'], 2, 0)
-        self.infolay.addWidget(self.widgets['date-get'], 3, 0)
-        self.infolay.setRowStretch(4, 4)
-        '''
-
         # time layout
         self.timelay.addWidget(self.widgets['date-day'], 0, 0)
         self.timelay.addWidget(self.widgets['date-month'], 0, 1)
@@ -119,30 +119,29 @@ class LogView(View):
 
         # callsign layout
         self.calllay.addWidget(self.widgets['call'], 0, 0, 1, 2)
-        self.calllay.addWidget(self.widgets['call-info'], 1, 0)
+        self.calllay.addWidget(self.widgets['call-more'], 1, 0)
         self.calllay.addWidget(self.widgets['call-qrz'], 1, 1)
+        self.calllay.addWidget(self.widgets['call-name'], 0, 2)
+        self.calllay.addWidget(self.widgets['call-loc'], 1, 2)
+
+        # contact layout
+        self.replay.addWidget(QLabel('Sent'), 0, 0)
+        self.replay.addWidget(self.widgets['rep-sent'], 0, 1)
+        self.replay.addWidget(QLabel('Received'), 1, 0)
+        self.replay.addWidget(self.widgets['rep-recv'], 1, 1)
+
+        # logbook
+        self.logbooklay.addWidget(self.widgets['logbook-table'], 0, 0)
 
         # main layout
         self.layout.addWidget(self.widgets['call-box'], 0, 0)
         self.layout.addWidget(self.widgets['date-box'], 0, 1)
-        self.layout.addWidget(self.widgets['logbook'], 1, 0, 1, 3)
+        self.layout.addWidget(self.widgets['rep-box'], 0, 2)
+        self.layout.addWidget(self.widgets['logbook'], 2, 0, 1, 4)
 
         # options
-        self.layout.setRowStretch(3, 4)
-        self.layout.setColumnStretch(2, 4)
-
-        '''
-        self.layout.addWidget(QLabel('Enter Callsign'), 0, 0)
-        self.layout.addWidget(self.widgets['call'], 1, 0)
-        self.layout.addWidget(self.widgets['info'], 0, 2)
-        self.layout.addWidget(self.widgets['logbook-refresh'], 1, 1)
-        self.layout.addWidget(self.widgets['logbook'], 2, 0, 1, 3)
-        self.layout.setRowStretch(2, 4)
-        self.layout.setColumnStretch(1, 1)
-        '''
-
-        # logbook
-        self.logbooklay.addWidget(self.widgets['logbook-table'], 0, 0)
+        self.layout.setRowStretch(1, 4)
+        self.layout.setColumnStretch(3, 4)
 
     # ## signals ## #
 
@@ -157,25 +156,24 @@ class LogView(View):
             self.logee = self.ol.lookup(call)
         except olerror.LookupResultError:
             self.logee = None
-            self.widgets['call-info'].setDisabled(True)
+            self.widgets['call-more'].setDisabled(True)
             self.widgets['call-qrz'].setDisabled(True)
             self.setStatus('No call sign found')
             return
         except olerror.LookupVerificationError:
             self.logee = None
-            self.widgets['call-info'].setDisabled(True)
+            self.widgets['call-more'].setDisabled(True)
             self.widgets['call-qrz'].setDisabled(True)
             self.setStatus('Login failed')
             return
 
         # set ui things
         self.setStatus('Callsign found')
-        self.widgets['call-info'].setDisabled(False)
+        self.widgets['call-more'].setDisabled(False)
         self.widgets['call-qrz'].setDisabled(False)
-        self.widgets['info'].setTitle('Info: ' + self.logee.callsign)
-        self.widgets['info-call'].setText(self.logee.callsign)
-        self.widgets['info-name'].setText(self.logee.name)
-        self.widgets['info-country'].setText(self.logee.country)
+        self.widgets['call'].setText(self.logee.callsign)
+        self.widgets['call-name'].setText(self.logee.name)
+        self.widgets['call-loc'].setText(self.logee.qth)
 
     def qrzsig(self):
         webbrowser.open(f'http://qrz.com/db/{self.logee.callsign}')
