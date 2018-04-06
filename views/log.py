@@ -54,8 +54,7 @@ class LogView(View):
         self.widgets['date-month'] = QLineEdit()
         self.widgets['date-day'] = QLineEdit()
         self.widgets['date-year'] = QLineEdit()
-        self.widgets['date-get'] = QPushButton('Get time')
-        self.widgets['date-reset'] = QPushButton('Reset time')
+        self.widgets['date-get'] = QPushButton('Now')
 
         self.widgets['rep-sent'] = QLineEdit()
         self.widgets['rep-recv'] = QLineEdit()
@@ -64,7 +63,6 @@ class LogView(View):
         self.widgets['call'].returnPressed.connect(self.lookupsig)
         self.widgets['logbook-refresh'].clicked.connect(self.load_table)
         self.widgets['date-get'].clicked.connect(self.timesig)
-        self.widgets['date-reset'].clicked.connect(self.timeresetsig)
         self.widgets['call-qrz'].clicked.connect(self.qrzsig)
 
         # options
@@ -110,12 +108,15 @@ class LogView(View):
 
     def build_view(self):
         # time layout
-        self.timelay.addWidget(self.widgets['date-day'], 0, 0)
-        self.timelay.addWidget(self.widgets['date-month'], 0, 1)
-        self.timelay.addWidget(self.widgets['date-year'], 0, 2)
-        self.timelay.addWidget(self.widgets['date-time'], 0, 3)
-        self.timelay.addWidget(self.widgets['date-get'], 1, 0, 1, 2)
-        self.timelay.addWidget(self.widgets['date-reset'], 1, 2, 1, 2)
+        self.timelay.addWidget(QLabel('Date:'), 0, 0)
+        self.timelay.addWidget(self.widgets['date-day'], 0, 1)
+        self.timelay.addWidget(QLabel('/'), 0, 2)
+        self.timelay.addWidget(self.widgets['date-month'], 0, 3)
+        self.timelay.addWidget(QLabel('/'), 0, 4)
+        self.timelay.addWidget(self.widgets['date-year'], 0, 5)
+        self.timelay.addWidget(QLabel('Time:'), 1, 0)
+        self.timelay.addWidget(self.widgets['date-time'], 1, 1)
+        self.timelay.addWidget(self.widgets['date-get'], 1, 2, 1, 4)
 
         # callsign layout
         self.calllay.addWidget(self.widgets['call'], 0, 0, 1, 2)
@@ -192,12 +193,6 @@ class LogView(View):
         self.widgets['date-year'].setText(date[0])
         self.widgets['date-time'].setText(time[:2] + time[3:5])
 
-    def timeresetsig(self):
-        self.widgets['date-time'].setText('')
-        self.widgets['date-day'].setText('')
-        self.widgets['date-month'].setText('')
-        self.widgets['date-year'].setText('')
-
     def load_table(self):
         cols = [
             {'name': 'call', 'type': Unicode},
@@ -222,7 +217,7 @@ class LogView(View):
             'freq': str(round(7.202 + i, 6))
         } for i in range(0, 50)]
 
-        print(data)
+        # print(data)
 
         self.widgets['logbook-table'].setRowCount(len(data))
         self.widgets['logbook-table'].setColumnCount(len(cols))
