@@ -41,7 +41,7 @@ class LogView(View):
 
         # log info
         self.widgets['call-box'] = QGroupBox('Callsign')
-        self.widgets['date-box'] = QGroupBox('Date/Time')
+        self.widgets['date-box'] = QGroupBox('Date/Time (UTC)')
         self.widgets['rep-box'] = QGroupBox('Report')
 
         self.widgets['call'] = QLineEdit()
@@ -119,11 +119,11 @@ class LogView(View):
         self.timelay.addWidget(self.widgets['date-get'], 1, 2, 1, 4)
 
         # callsign layout
-        self.calllay.addWidget(self.widgets['call'], 0, 0, 1, 2)
-        self.calllay.addWidget(self.widgets['call-more'], 1, 0)
-        self.calllay.addWidget(self.widgets['call-qrz'], 1, 1)
-        self.calllay.addWidget(self.widgets['call-name'], 0, 2)
-        self.calllay.addWidget(self.widgets['call-loc'], 1, 2)
+        self.calllay.addWidget(self.widgets['call'], 0, 0)
+        self.calllay.addWidget(self.widgets['call-loc'], 0, 1, 1, 2)
+        self.calllay.addWidget(self.widgets['call-name'], 1, 0)
+        self.calllay.addWidget(self.widgets['call-more'], 1, 1)
+        self.calllay.addWidget(self.widgets['call-qrz'], 1, 2)
 
         # contact layout
         self.replay.addWidget(QLabel('Sent'), 0, 0)
