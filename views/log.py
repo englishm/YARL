@@ -132,6 +132,7 @@ class LogView(View):
 
         # logbook
         self.logbooklay.addWidget(self.widgets['logbook-table'], 0, 0)
+        self.load_table()
 
         # main layout
         self.layout.addWidget(self.widgets['call-box'], 0, 0)
