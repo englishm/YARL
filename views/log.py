@@ -27,6 +27,8 @@ class LogView(View):
         self.timelay = QGridLayout()
         self.calllay = QGridLayout()
         self.replay = QGridLayout()
+        self.freqlay = QGridLayout()
+        self.otherlay = QGridLayout()
 
         # initalizerators
         self.setup_widgets()
@@ -43,6 +45,8 @@ class LogView(View):
         self.widgets['call-box'] = QGroupBox('Callsign')
         self.widgets['date-box'] = QGroupBox('Date/Time (UTC)')
         self.widgets['rep-box'] = QGroupBox('Report')
+        self.widgets['freq-box'] = QGroupBox('Frequency/Mode')
+        self.widgets['other-box'] = QGroupBox('Other')
 
         self.widgets['call'] = QLineEdit()
         self.widgets['call-more'] = QPushButton('More')
@@ -58,6 +62,15 @@ class LogView(View):
 
         self.widgets['rep-sent'] = QLineEdit()
         self.widgets['rep-recv'] = QLineEdit()
+
+        self.widgets['freq-band'] = QComboBox(self)
+        self.widgets['freq-mode'] = QComboBox(self)
+
+        self.widgets['other-text'] = QLineEdit()
+        self.widgets['other-pse'] = QRadioButton('PSE')
+        self.widgets['other-tnx'] = QRadioButton('TNX')
+
+        self.widgets['log-button'] = QPushButton('Log Contact')
 
         # set signals
         self.widgets['call'].returnPressed.connect(self.lookupsig)
@@ -103,6 +116,8 @@ class LogView(View):
         self.widgets['date-box'].setLayout(self.timelay)
         self.widgets['call-box'].setLayout(self.calllay)
         self.widgets['rep-box'].setLayout(self.replay)
+        self.widgets['freq-box'].setLayout(self.freqlay)
+        self.widgets['other-box'].setLayout(self.otherlay)
 
         self.setViewLayout(self.layout)
 
@@ -125,11 +140,24 @@ class LogView(View):
         self.calllay.addWidget(self.widgets['call-more'], 1, 1)
         self.calllay.addWidget(self.widgets['call-qrz'], 1, 2)
 
-        # contact layout
+        # report layout
         self.replay.addWidget(QLabel('Sent'), 0, 0)
         self.replay.addWidget(self.widgets['rep-sent'], 0, 1)
         self.replay.addWidget(QLabel('Received'), 1, 0)
         self.replay.addWidget(self.widgets['rep-recv'], 1, 1)
+
+        # frquency layout
+        self.freqlay.addWidget(QLabel('Band:'), 0, 0)
+        self.freqlay.addWidget(self.widgets['freq-band'], 0, 1)
+        self.freqlay.addWidget(QLabel('Mode'), 1, 0)
+        self.freqlay.addWidget(self.widgets['freq-mode'], 1, 1)
+
+        # other layout
+        self.otherlay.addWidget(QLabel('QSL:'), 0, 0)
+        self.otherlay.addWidget(self.widgets['other-pse'], 0, 1)
+        self.otherlay.addWidget(self.widgets['other-tnx'], 0, 2)
+        self.otherlay.addWidget(QLabel('Notes:'), 1, 0)
+        self.otherlay.addWidget(self.widgets['other-text'], 1, 1, 1, 2)
 
         # logbook
         self.logbooklay.addWidget(self.widgets['logbook-table'], 0, 0)
@@ -139,11 +167,14 @@ class LogView(View):
         self.layout.addWidget(self.widgets['call-box'], 0, 0)
         self.layout.addWidget(self.widgets['date-box'], 0, 1)
         self.layout.addWidget(self.widgets['rep-box'], 0, 2)
-        self.layout.addWidget(self.widgets['logbook'], 1, 0, 1, 4)
+        self.layout.addWidget(self.widgets['freq-box'], 1, 0)
+        self.layout.addWidget(self.widgets['other-box'], 1, 1)
+        self.layout.addWidget(self.widgets['log-button'], 1, 2)
+        self.layout.addWidget(self.widgets['logbook'], 2, 0, 1, 4)
 
         # options
-        self.layout.setRowStretch(1, 4)
-        self.layout.setColumnStretch(3, 4)
+        self.layout.setRowStretch(2, 4)
+        self.layout.setColumnStretch(4, 4)
 
     # ## signals ## #
 

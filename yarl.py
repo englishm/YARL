@@ -21,8 +21,8 @@ class Yarl(MultiView):
         self.title = 'Yet Another Radio Logger'
         self.left = 10
         self.top = 10
-        self.width = 700
-        self.height = 400
+        self.width = 650
+        self.height = 500
 
         # shared online lookup objectd
         self.ol = hamqth.HamQTHLookup()
