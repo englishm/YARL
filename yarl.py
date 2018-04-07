@@ -27,6 +27,10 @@ class Yarl(MultiView):
         # shared online lookup objectd
         self.ol = hamqth.HamQTHLookup()
 
+        # enabled items
+        self.enabled_fields = ['freq-box', 'other-box', 'rep-box',
+                               'call-box', 'date-box']
+
         # setup
         self.setupWindow()
         self.setupWidgets()

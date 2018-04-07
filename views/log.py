@@ -6,6 +6,7 @@ import webbrowser
 from datetime import datetime
 from sqlalchemy import Unicode, Integer, Float
 
+from utils.flowlayout import FlowLayout
 from utils.multiview import View
 from utils.onlinelookup import hamqth, olerror
 from utils.dbconnector.dbconnector import DbConnector
@@ -21,9 +22,14 @@ class LogView(View):
         self.widgets = dict()
         self.logee = None
 
+        self.enabled_fields = mvp.enabled_fields
+
+        self.widgets['logger'] = QGroupBox('Entry')
         # initialize layouts
         self.layout = QGridLayout()
         self.logbooklay = QGridLayout()
+
+        self.loggerlay = FlowLayout(self.widgets['logger'])
         self.timelay = QGridLayout()
         self.calllay = QGridLayout()
         self.replay = QGridLayout()
@@ -112,6 +118,7 @@ class LogView(View):
     def setup_layouts(self):
 
         # set layouts to widgets
+        self.widgets['logger'].setLayout(self.loggerlay)
         self.widgets['logbook'].setLayout(self.logbooklay)
         self.widgets['date-box'].setLayout(self.timelay)
         self.widgets['call-box'].setLayout(self.calllay)
@@ -160,17 +167,21 @@ class LogView(View):
         self.otherlay.addWidget(self.widgets['other-text'], 1, 1, 1, 2)
 
         # logbook
-        self.logbooklay.addWidget(self.widgets['logbook-table'], 0, 0)
+        self.logbooklay.addWidget(self.widgets['logbook-table'], 1, 0)
+        self.logbooklay.addWidget(self.widgets['logbook-refresh'], 0, 0)
         self.load_table()
 
+        # logger area
+        self.loggerlay.addWidget(self.widgets['date-box'])
+        self.loggerlay.addWidget(self.widgets['call-box'])
+        self.loggerlay.addWidget(self.widgets['rep-box'])
+        self.loggerlay.addWidget(self.widgets['freq-box'])
+        self.loggerlay.addWidget(self.widgets['other-box'])
+
         # main layout
-        self.layout.addWidget(self.widgets['call-box'], 0, 0)
-        self.layout.addWidget(self.widgets['date-box'], 0, 1)
-        self.layout.addWidget(self.widgets['rep-box'], 0, 2)
-        self.layout.addWidget(self.widgets['freq-box'], 1, 0)
-        self.layout.addWidget(self.widgets['other-box'], 1, 1)
-        self.layout.addWidget(self.widgets['log-button'], 1, 2)
-        self.layout.addWidget(self.widgets['logbook'], 2, 0, 1, 4)
+        self.layout.addWidget(self.widgets['logger'], 0, 0, 1, 6)
+        self.layout.addWidget(self.widgets['log-button'], 1, 0)
+        self.layout.addWidget(self.widgets['logbook'], 2, 0, 1, 6)
 
         # options
         self.layout.setRowStretch(2, 4)
