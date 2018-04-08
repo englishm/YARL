@@ -105,8 +105,10 @@ class SettingsView(View):
 
     def togglefield(self, field):
         if field in self.enabled_fields:
+            self.parent.access('log').widgets[field].setVisible(False)
             self.enabled_fields.remove(field)
             print(field, 'now off...', self.enabled_fields)
         else:
-            self.enabled_fields.append(field)
+            self.parent.access('log').widgets[field].setVisible(True)
+            self.enabled_fields.remove(field)
             print(field, 'now on...', self.enabled_fields)

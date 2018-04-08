@@ -11,10 +11,6 @@ from utils.multiview import View
 from utils.onlinelookup import hamqth, olerror
 from utils.dbconnector.dbconnector import DbConnector
 
-# enabled items
-# enabled_fields = ['freq-box', 'other-box', 'rep-box',
-#                       'call-box', 'date-box']
-
 
 class LogView(View):
     def setup_view(self):
@@ -25,7 +21,8 @@ class LogView(View):
         self.logee = None
 
         # other variables
-        self.enabled_fields = ['1']  # self.parent.enabled_fields
+        self.enabled_fields = ['date-box', 'call-box', 'rep-box',
+                               'freq-box', 'other-box']
         self.ol = self.parent.parent.ol
 
         # initalizerators
