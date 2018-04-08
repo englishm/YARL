@@ -26,27 +26,41 @@ class SettingsView(View):
         self.start_lookup()
 
     def setup_widgets(self):
-        self.widgets['lookup-area'] = QGroupBox('HamQTH')
+        self.widgets['lookup-box'] = QGroupBox('HamQTH')
         self.widgets['lookup-status'] = QLabel('Status: Not activated')
         self.widgets['lookup-user'] = QLineEdit()
         self.widgets['lookup-pass'] = QLineEdit()
         self.widgets['lookup-set'] = QPushButton('Set')
 
-        self.widgets['enabled-area'] = QGroupBox('Enable Sections')
-        self.widgets['en-time'] = QCheckBox('Enable Time')
-        self.widgets['en-call'] = QCheckBox('Enable Call')
+        self.widgets['enabled-box'] = QGroupBox('Toggle Sections')
         self.widgets['en-rep'] = QCheckBox('Enable Report')
         self.widgets['en-freq'] = QCheckBox('Enable Frequency')
         self.widgets['en-other'] = QCheckBox('Enable Other')
+
+        self.widgets['set-call'] = QWidget()
+        self.widgets['set-date'] = QWidget()
+        self.widgets['set-rep'] = QWidget()
+        self.widgets['set-freq'] = QWidget()
+        self.widgets['set-other'] = QWidget()
+
+        self.widgets['set'] = QToolBox()
+
+        self.widgets['set'].insertItem(0, self.widgets['set-call'], 'Callsign')
+        self.widgets['set'].insertItem(1, self.widgets['set-date'],
+                                       'Date/Time')
+        self.widgets['set'].insertItem(2, self.widgets['set-rep'], 'Report')
+        self.widgets['set'].insertItem(3, self.widgets['set-freq'],
+                                       'Frequency')
+        self.widgets['set'].insertItem(4, self.widgets['set-other'], 'Other')
 
         # set signals
         self.widgets['lookup-set'].clicked.connect(self.olconnectsig)
         self.widgets['lookup-pass'].returnPressed.connect(self.olconnectsig)
 
-        self.widgets['en-time'].toggled\
-            .connect(lambda: self.togglefield('date-box'))
-        self.widgets['en-call'].toggled\
-            .connect(lambda: self.togglefield('call-box'))
+        # self.widgets['en-time'].toggled\
+        #    .connect(lambda: self.togglefield('date-box'))
+        # self.widgets['en-call'].toggled\
+        #    .connect(lambda: self.togglefield('call-box'))
         self.widgets['en-rep'].toggled\
             .connect(lambda: self.togglefield('rep-box'))
         self.widgets['en-freq'].toggled\
@@ -58,11 +72,22 @@ class SettingsView(View):
         self.widgets['lookup-pass'].setEchoMode(QtWidgets.QLineEdit.Password)
 
     def setup_layouts(self):
+        # view set layouts
+        self.lcall = QVBoxLayout()
+        self.ldate = QVBoxLayout()
+        self.lrep = QVBoxLayout()
+        self.lfreq = QVBoxLayout()
+        self.lother = QVBoxLayout()
 
         # set layouts
         self.set_layout(self.layout)
-        self.widgets['lookup-area'].setLayout(self.lookuplayout)
-        self.widgets['enabled-area'].setLayout(self.enabledlayout)
+        self.widgets['lookup-box'].setLayout(self.lookuplayout)
+        self.widgets['enabled-box'].setLayout(self.enabledlayout)
+        self.widgets['set-call'].setLayout(self.lcall)
+        self.widgets['set-date'].setLayout(self.ldate)
+        self.widgets['set-rep'].setLayout(self.lrep)
+        self.widgets['set-freq'].setLayout(self.lfreq)
+        self.widgets['set-other'].setLayout(self.lother)
 
     def build_view(self):
         # lookup area
@@ -73,15 +98,16 @@ class SettingsView(View):
         self.lookuplayout.addWidget(self.widgets['lookup-set'], 2, 0, 1, 2)
         self.lookuplayout.addWidget(self.widgets['lookup-status'], 3, 0, 1, 2)
 
-        self.enabledlayout.addWidget(self.widgets['en-time'], 0, 0)
-        self.enabledlayout.addWidget(self.widgets['en-call'], 1, 0)
-        self.enabledlayout.addWidget(self.widgets['en-rep'], 2, 0)
-        self.enabledlayout.addWidget(self.widgets['en-freq'], 3, 0)
-        self.enabledlayout.addWidget(self.widgets['en-other'], 4, 0)
+        self.lrep.addWidget(self.widgets['en-rep'])
+        # self.enabledlayout.addWidget(self.widgets['en-call'], 1, 0)
+        self.lfreq.addWidget(self.widgets['en-freq'])
+        self.lother.addWidget(self.widgets['en-other'])
+
+        self.enabledlayout.addWidget(self.widgets['set'], 0, 0)
 
         # main layout
-        self.layout.addWidget(self.widgets['lookup-area'], 0, 0)
-        self.layout.addWidget(self.widgets['enabled-area'], 1, 0)
+        self.layout.addWidget(self.widgets['lookup-box'], 0, 0)
+        self.layout.addWidget(self.widgets['enabled-box'], 1, 0)
 
         # options
         self.layout.setColumnStretch(1, 2)
