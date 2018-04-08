@@ -24,7 +24,7 @@ class LogView(View):
 
         self.enabled_fields = mvp.enabled_fields
 
-        self.widgets['logger'] = QGroupBox('Entry')
+        self.widgets['logger'] = QWidget()
         # initialize layouts
         self.layout = QGridLayout()
         self.logbooklay = QGridLayout()
