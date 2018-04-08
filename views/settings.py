@@ -7,14 +7,11 @@ from utils.onlinelookup import hamqth, olerror
 
 
 class SettingsView(View):
-    def __init__(self, mvp):
-        super().__init__(mvp)
-        self.loadMenu('config/log-menu.json')
-
+    def setup_view(self):
         # variables
-        self.ol = mvp.ol
+        self.ol = self.parent.parent.ol
 
-        self.enabled_fields = mvp.enabled_fields
+        self.enabled_fields = self.parent.access('log').enabled_fields
 
         # init layouts
         self.layout = QGridLayout()
@@ -63,7 +60,7 @@ class SettingsView(View):
     def setup_layouts(self):
 
         # set layouts
-        self.setViewLayout(self.layout)
+        self.set_layout(self.layout)
         self.widgets['lookup-area'].setLayout(self.lookuplayout)
         self.widgets['enabled-area'].setLayout(self.enabledlayout)
 

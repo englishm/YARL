@@ -11,30 +11,22 @@ from utils.multiview import View
 from utils.onlinelookup import hamqth, olerror
 from utils.dbconnector.dbconnector import DbConnector
 
+# enabled items
+# enabled_fields = ['freq-box', 'other-box', 'rep-box',
+#                       'call-box', 'date-box']
+
 
 class LogView(View):
-    def __init__(self, mvp):
-        super().__init__(mvp)
-        self.loadMenu('config/log-menu.json')
+    def setup_view(self):
+        self.load_menu('config/log-menu.json')
 
         # variables
-        self.ol = mvp.ol
         self.widgets = dict()
         self.logee = None
 
-        self.enabled_fields = mvp.enabled_fields
-
-        self.widgets['logger'] = QWidget()
-        # initialize layouts
-        self.layout = QGridLayout()
-        self.logbooklay = QGridLayout()
-
-        self.loggerlay = FlowLayout(self.widgets['logger'])
-        self.timelay = QGridLayout()
-        self.calllay = QGridLayout()
-        self.replay = QGridLayout()
-        self.freqlay = QGridLayout()
-        self.otherlay = QGridLayout()
+        # other variables
+        self.enabled_fields = ['1']  # self.parent.enabled_fields
+        self.ol = self.parent.parent.ol
 
         # initalizerators
         self.setup_widgets()
@@ -48,6 +40,7 @@ class LogView(View):
         self.widgets['logbook-refresh'] = QPushButton('Refresh Logbook')
 
         # log info
+        self.widgets['logger'] = QWidget()
         self.widgets['call-box'] = QGroupBox('Callsign')
         self.widgets['date-box'] = QGroupBox('Date/Time (UTC)')
         self.widgets['rep-box'] = QGroupBox('Report')
@@ -116,6 +109,14 @@ class LogView(View):
         self.widgets['rep-recv'].setText('59')
 
     def setup_layouts(self):
+        self.layout = QGridLayout()
+        self.logbooklay = QGridLayout()
+        self.loggerlay = FlowLayout(self.widgets['logger'])
+        self.timelay = QGridLayout()
+        self.calllay = QGridLayout()
+        self.replay = QGridLayout()
+        self.freqlay = QGridLayout()
+        self.otherlay = QGridLayout()
 
         # set layouts to widgets
         self.widgets['logger'].setLayout(self.loggerlay)
@@ -126,7 +127,7 @@ class LogView(View):
         self.widgets['freq-box'].setLayout(self.freqlay)
         self.widgets['other-box'].setLayout(self.otherlay)
 
-        self.setViewLayout(self.layout)
+        self.set_layout(self.layout)
 
     def build_view(self):
         # time layout
@@ -172,8 +173,8 @@ class LogView(View):
         self.load_table()
 
         # logger area
-        self.loggerlay.addWidget(self.widgets['date-box'])
         self.loggerlay.addWidget(self.widgets['call-box'])
+        self.loggerlay.addWidget(self.widgets['date-box'])
         self.loggerlay.addWidget(self.widgets['rep-box'])
         self.loggerlay.addWidget(self.widgets['freq-box'])
         self.loggerlay.addWidget(self.widgets['other-box'])
@@ -193,7 +194,7 @@ class LogView(View):
         call = self.widgets['call'].text()
 
         if call == '':
-            self.setStatus('no call to lookup')
+            self.set_status('no call to lookup')
             return
 
         try:
@@ -202,17 +203,17 @@ class LogView(View):
             self.logee = None
             self.widgets['call-more'].setDisabled(True)
             self.widgets['call-qrz'].setDisabled(True)
-            self.setStatus('No call sign found')
+            self.set_status('No call sign found')
             return
         except olerror.LookupVerificationError:
             self.logee = None
             self.widgets['call-more'].setDisabled(True)
             self.widgets['call-qrz'].setDisabled(True)
-            self.setStatus('Login failed')
+            self.set_status('Login failed')
             return
 
         # set ui things
-        self.setStatus('Callsign found')
+        self.set_status('Callsign found')
         self.widgets['call-more'].setDisabled(False)
         self.widgets['call-qrz'].setDisabled(False)
         self.widgets['call'].setText(self.logee.callsign)

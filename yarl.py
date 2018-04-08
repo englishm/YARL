@@ -12,24 +12,20 @@ from views.log import LogView
 from views.settings import SettingsView
 
 
-class Yarl(MultiView):
+class Yarl(QMainWindow):
     def __init__(self):
         # formalities
         super().__init__()
 
-        # variables
+        # window variables
         self.title = 'Yet Another Radio Logger'
         self.left = 10
         self.top = 10
         self.width = 650
         self.height = 500
 
-        # shared online lookup objectd
+        # other variables
         self.ol = hamqth.HamQTHLookup()
-
-        # enabled items
-        self.enabled_fields = ['freq-box', 'other-box', 'rep-box',
-                               'call-box', 'date-box']
 
         # setup
         self.setupWindow()
@@ -44,9 +40,9 @@ class Yarl(MultiView):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-        # create the bars
-        self.createMenuBar()
-        self.createStatusBar()
+        # bars
+        self.mb = self.menuBar()
+        self.sb = self.statusBar()
 
     def setupWidgets(self):
         # widget time
@@ -56,17 +52,16 @@ class Yarl(MultiView):
         self.widgets['settings'] = QPushButton('Settings')
         self.widgets['log'] = QPushButton('Log')
 
+        self.mv = MultiView(self.mb, self.sb, self)
+
+        # setup multiview
+        self.mv.add_view('log', LogView(self.mv))
+        self.mv.add_view('settings', SettingsView(self.mv))
+        self.mv.set_view('log')
+
         # set signals
         self.widgets['settings'].clicked.connect(self.settingssig)
         self.widgets['log'].clicked.connect(self.logsig)
-
-        # initialize views
-        self.logview = self.addView(LogView(self))
-        self.settingsview = self.addView(SettingsView(self))
-
-        # set first view
-        # for now, the logview is the first
-        self.setCurrentView(self.logview)
 
     def setupLayouts(self):
         self.layout = QGridLayout()
@@ -76,7 +71,7 @@ class Yarl(MultiView):
     def build(self):
         self.layout.addWidget(self.widgets['log'], 0, 0)
         self.layout.addWidget(self.widgets['settings'], 0, 1)
-        self.layout.addWidget(self.getViewer(), 1, 0, 1, 3)
+        self.layout.addWidget(self.mv.get_widget(), 1, 0, 1, 3)
 
         # options
         self.layout.setColumnStretch(2, 4)
@@ -87,10 +82,10 @@ class Yarl(MultiView):
     # ## signals ## #
 
     def settingssig(self):
-        self.setCurrentView(self.settingsview)
+        self.mv.set_view('settings')
 
     def logsig(self):
-        self.setCurrentView(self.logview)
+        self.mv.set_view('log')
 
 
 if __name__ == '__main__':

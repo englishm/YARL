@@ -154,7 +154,6 @@ if __name__ == '__main__':
 
             self.setWindowTitle("Flow Layout")
 
-
     app = QApplication(sys.argv)
     m = Window()
     m.show()
