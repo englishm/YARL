@@ -2,6 +2,8 @@ from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
+import json
+
 from utils.multiview import View
 from utils.onlinelookup import hamqth, olerror
 
@@ -12,11 +14,12 @@ class SettingsView(View):
         self.ol = self.parent.parent.ol
 
         self.enabled_fields = self.parent.access('log').enabled_fields
+        self.fields = self.parent.access('log').fields
 
         # init layouts
         self.layout = QGridLayout()
         self.lookuplayout = QGridLayout()
-        self.enabledlayout = QGridLayout()
+        self.customlayout = QGridLayout()
 
         self.widgets = dict()
 
@@ -26,68 +29,41 @@ class SettingsView(View):
         self.start_lookup()
 
     def setup_widgets(self):
+        # lookup
         self.widgets['lookup-box'] = QGroupBox('HamQTH')
         self.widgets['lookup-status'] = QLabel('Status: Not activated')
         self.widgets['lookup-user'] = QLineEdit()
         self.widgets['lookup-pass'] = QLineEdit()
         self.widgets['lookup-set'] = QPushButton('Set')
 
-        self.widgets['enabled-box'] = QGroupBox('Toggle Sections')
-        self.widgets['en-rep'] = QCheckBox('Enable Report')
-        self.widgets['en-freq'] = QCheckBox('Enable Frequency')
-        self.widgets['en-other'] = QCheckBox('Enable Other')
-
-        self.widgets['set-call'] = QWidget()
-        self.widgets['set-date'] = QWidget()
-        self.widgets['set-rep'] = QWidget()
-        self.widgets['set-freq'] = QWidget()
-        self.widgets['set-other'] = QWidget()
-
-        self.widgets['set'] = QToolBox()
-
-        self.widgets['set'].insertItem(0, self.widgets['set-call'], 'Callsign')
-        self.widgets['set'].insertItem(1, self.widgets['set-date'],
-                                       'Date/Time')
-        self.widgets['set'].insertItem(2, self.widgets['set-rep'], 'Report')
-        self.widgets['set'].insertItem(3, self.widgets['set-freq'],
-                                       'Frequency')
-        self.widgets['set'].insertItem(4, self.widgets['set-other'], 'Other')
+        # customize
+        self.widgets['enabled-box'] = QGroupBox('Customize Layout')
+        self.widgets['en-rep'] = QCheckBox('Report')
+        self.widgets['en-freq'] = QCheckBox('Frequency')
+        self.widgets['en-other'] = QCheckBox('Other')
+        self.widgets['en-save'] = QPushButton('Save Layout')
 
         # set signals
         self.widgets['lookup-set'].clicked.connect(self.olconnectsig)
         self.widgets['lookup-pass'].returnPressed.connect(self.olconnectsig)
 
-        # self.widgets['en-time'].toggled\
-        #    .connect(lambda: self.togglefield('date-box'))
-        # self.widgets['en-call'].toggled\
-        #    .connect(lambda: self.togglefield('call-box'))
-        self.widgets['en-rep'].toggled\
-            .connect(lambda: self.togglefield('rep-box'))
-        self.widgets['en-freq'].toggled\
-            .connect(lambda: self.togglefield('freq-box'))
-        self.widgets['en-other'].toggled\
-            .connect(lambda: self.togglefield('other-box'))
+        self.set_checked()
 
         # options
+        self.widgets['en-rep'].toggled\
+            .connect(lambda: self.togglefield('en-rep', 'rep-box'))
+        self.widgets['en-freq'].toggled\
+            .connect(lambda: self.togglefield('en-freq', 'freq-box'))
+        self.widgets['en-other'].toggled\
+            .connect(lambda: self.togglefield('en-other', 'other-box'))
+        self.widgets['en-save'].clicked.connect(self.laysavesig)
         self.widgets['lookup-pass'].setEchoMode(QtWidgets.QLineEdit.Password)
 
     def setup_layouts(self):
-        # view set layouts
-        self.lcall = QVBoxLayout()
-        self.ldate = QVBoxLayout()
-        self.lrep = QVBoxLayout()
-        self.lfreq = QVBoxLayout()
-        self.lother = QVBoxLayout()
-
         # set layouts
         self.set_layout(self.layout)
         self.widgets['lookup-box'].setLayout(self.lookuplayout)
-        self.widgets['enabled-box'].setLayout(self.enabledlayout)
-        self.widgets['set-call'].setLayout(self.lcall)
-        self.widgets['set-date'].setLayout(self.ldate)
-        self.widgets['set-rep'].setLayout(self.lrep)
-        self.widgets['set-freq'].setLayout(self.lfreq)
-        self.widgets['set-other'].setLayout(self.lother)
+        self.widgets['enabled-box'].setLayout(self.customlayout)
 
     def build_view(self):
         # lookup area
@@ -98,12 +74,11 @@ class SettingsView(View):
         self.lookuplayout.addWidget(self.widgets['lookup-set'], 2, 0, 1, 2)
         self.lookuplayout.addWidget(self.widgets['lookup-status'], 3, 0, 1, 2)
 
-        self.lrep.addWidget(self.widgets['en-rep'])
-        # self.enabledlayout.addWidget(self.widgets['en-call'], 1, 0)
-        self.lfreq.addWidget(self.widgets['en-freq'])
-        self.lother.addWidget(self.widgets['en-other'])
-
-        self.enabledlayout.addWidget(self.widgets['set'], 0, 0)
+        # customize area
+        self.customlayout.addWidget(self.widgets['en-rep'], 0, 0)
+        self.customlayout.addWidget(self.widgets['en-freq'], 1, 0)
+        self.customlayout.addWidget(self.widgets['en-other'], 2, 0)
+        self.customlayout.addWidget(self.widgets['en-save'], 4, 0)
 
         # main layout
         self.layout.addWidget(self.widgets['lookup-box'], 0, 0)
@@ -112,6 +87,20 @@ class SettingsView(View):
         # options
         self.layout.setColumnStretch(1, 2)
         self.layout.setRowStretch(1, 2)
+        self.customlayout.setRowStretch(3, 4)
+
+    def set_checked(self):
+        for i in self.fields['enabled']:
+            print(i)
+            box = str(self.fields['enabled'][i])
+            print(box)
+            if box in self.widgets:
+                print('yay')
+                print(self.widgets[box])
+                self.widgets[box].setChecked(True)
+        for i in self.fields['disabled']:
+            if i in self.parent.access('log').widgets:
+                self.parent.access('log').widgets[i].setVisible(False)
 
     def start_lookup(self):
         try:
@@ -129,12 +118,25 @@ class SettingsView(View):
         self.ol.create_login(username, password)
         self.start_lookup()
 
-    def togglefield(self, field):
-        if field in self.enabled_fields:
+    def togglefield(self, caller, field):
+        if field in self.fields['enabled']:
+            # set abled status
+            tmpd = self.fields['enabled'][field]
+            del self.fields['enabled'][field]
+            self.fields['disabled'][field] = tmpd
+
+            # do the thing
             self.parent.access('log').widgets[field].setVisible(False)
-            self.enabled_fields.remove(field)
-            print(field, 'now off...', self.enabled_fields)
-        else:
+            print(field, 'now off...', self.fields['enabled'])
+        elif field in self.fields['disabled']:
+            # set abled status
+            tmpd = self.fields['disabled'][field]
+            del self.fields['disabled'][field]
+            self.fields['enabled'][field] = tmpd
+
             self.parent.access('log').widgets[field].setVisible(True)
-            self.enabled_fields.remove(field)
-            print(field, 'now on...', self.enabled_fields)
+            print(field, 'now on...', self.fields['disabled'])
+
+    def laysavesig(self):
+        with open('config/log-layout.json', 'w') as f:
+            json.dump(self.fields, f)

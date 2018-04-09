@@ -57,7 +57,7 @@ class Yarl(QMainWindow):
         # setup multiview
         self.mv.add_view('log', LogView(self.mv))
         self.mv.add_view('settings', SettingsView(self.mv))
-        self.mv.set_view('log')
+        self.mv.set_view('settings')
 
         # set signals
         self.widgets['settings'].clicked.connect(self.settingssig)
