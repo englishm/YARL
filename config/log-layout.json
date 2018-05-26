@@ -1,1 +1,1 @@
-{"enabled": {"freq-box": "en-freq", "other-box": "en-other", "rep-box": "en-rep"}, "disabled": {}}
+{"enabled": {"rep-box": "en-rep"}, "disabled": {"other-box": "en-other", "freq-box": "en-freq"}}
