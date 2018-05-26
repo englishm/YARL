@@ -3,7 +3,7 @@
 Yet Another Radio Logger. Written in Python 3.6.
 
 Designed to be the ham radio logging program that covers the gaps between the
-best contest loggers the best general purpose loggers.
+best contest loggers and the best general purpose loggers.
 
 ## Planned Features
 
@@ -12,6 +12,9 @@ See [The TODO List](https://github.com/young-amateurs-rc/YARL/projects/1).
 ## Contributors
 
 - Galen Gold, KB6EE
+- Caleb Smith, KZ0P
+- Benjamin Johnson, AB3NJ
+- ntoskrnl
 
 ## License
 
